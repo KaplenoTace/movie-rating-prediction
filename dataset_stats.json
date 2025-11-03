@@ -1,0 +1,8 @@
+{
+  "total_movies": 5000,
+  "avg_rating": 7.4389,
+  "avg_budget": 60.136516738116136,
+  "avg_runtime": 119.279,
+  "num_directors": 200,
+  "num_genres": 10
+}

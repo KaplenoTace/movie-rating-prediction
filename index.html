@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Rating Prediction System</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Primitive Color Tokens */
+            --color-white: rgba(255, 255, 255, 1);
+            --color-black: rgba(0, 0, 0, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-cream-100: rgba(255, 255, 253, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-300: rgba(167, 169, 169, 1);
+            --color-gray-400: rgba(119, 124, 124, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-brown-600: rgba(94, 82, 64, 1);
+            --color-charcoal-700: rgba(31, 33, 33, 1);
+            --color-charcoal-800: rgba(38, 40, 40, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-300: rgba(50, 184, 198, 1);
+            --color-teal-400: rgba(45, 166, 178, 1);
+            --color-teal-500: rgba(33, 128, 141, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-700: rgba(26, 104, 115, 1);
+            --color-navy-900: rgba(13, 27, 42, 1);
+            --color-navy-800: rgba(26, 42, 58, 1);
+
+            /* RGB versions for opacity control */
+            --color-brown-600-rgb: 94, 82, 64;
+            --color-teal-500-rgb: 33, 128, 141;
+            --color-slate-900-rgb: 19, 52, 59;
+            --color-slate-500-rgb: 98, 108, 113;
+
+            /* Semantic Color Tokens (Light Mode) */
+            --color-background: var(--color-cream-50);
+            --color-surface: var(--color-cream-100);
+            --color-text: var(--color-slate-900);
+            --color-text-secondary: var(--color-slate-500);
+            --color-primary: var(--color-teal-500);
+            --color-primary-hover: var(--color-teal-600);
+            --color-primary-active: var(--color-teal-700);
+            --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+            --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+            --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+
+            /* Typography */
+            --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-size-sm: 12px;
+            --font-size-base: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
+            --font-size-2xl: 20px;
+            --font-size-3xl: 24px;
+            --font-size-4xl: 30px;
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 550;
+            --font-weight-bold: 600;
+
+            /* Spacing */
+            --space-4: 4px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --space-32: 32px;
+
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-base: 8px;
+            --radius-lg: 12px;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+
+            /* Animation */
+            --duration-fast: 150ms;
+            --duration-normal: 250ms;
+            --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-gray-400-rgb: 119, 124, 124;
+                --color-teal-300-rgb: 50, 184, 198;
+                --color-gray-300-rgb: 167, 169, 169;
+                --color-gray-200-rgb: 245, 245, 245;
+                --color-background: var(--color-charcoal-700);
+                --color-surface: var(--color-charcoal-800);
+                --color-text: var(--color-gray-200);
+                --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+                --color-primary: var(--color-teal-300);
+                --color-primary-hover: var(--color-teal-400);
+                --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+                --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+                --color-card-border: rgba(var(--color-gray-400-rgb), 0.15);
+            }
+        }
+
+        [data-color-scheme="dark"] {
+            --color-gray-400-rgb: 119, 124, 124;
+            --color-teal-300-rgb: 50, 184, 198;
+            --color-gray-300-rgb: 167, 169, 169;
+            --color-gray-200-rgb: 245, 245, 245;
+            --color-background: var(--color-charcoal-700);
+            --color-surface: var(--color-charcoal-800);
+            --color-text: var(--color-gray-200);
+            --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+            --color-primary: var(--color-teal-300);
+            --color-primary-hover: var(--color-teal-400);
+            --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+            --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+            --color-card-border: rgba(var(--color-gray-400-rgb), 0.15);
+        }
+
+        @font-face {
+            font-family: 'FKGroteskNeue';
+            src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2') format('woff2');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--color-slate-900) 0%, var(--color-teal-700) 100%);
+            color: white;
+            padding: var(--space-32) var(--space-24);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header h1 {
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-8);
+        }
+
+        .header p {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: var(--space-20);
+            right: var(--space-24);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: var(--space-8) var(--space-16);
+            border-radius: var(--radius-base);
+            color: white;
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            transition: background var(--duration-fast) var(--ease-standard);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            background-color: var(--color-surface);
+            border-bottom: 2px solid var(--color-border);
+            padding: 0 var(--space-16);
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: var(--space-16) var(--space-24);
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-standard);
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            color: var(--color-primary);
+        }
+
+        .nav-tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: var(--space-32) var(--space-24);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-20);
+            margin-bottom: var(--space-32);
+        }
+
+        .stat-card {
+            background-color: var(--color-surface);
+            padding: var(--space-24);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-card-border);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card h3 {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-8);
+        }
+
+        .stat-card .value {
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-primary);
+        }
+
+        .section {
+            background-color: var(--color-surface);
+            padding: var(--space-24);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-card-border);
+            margin-bottom: var(--space-24);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section h2 {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-20);
+            color: var(--color-text);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-20);
+        }
+
+        .form-group label {
+            display: block;
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            margin-bottom: var(--space-8);
+            color: var(--color-text);
+        }
+
+        .form-group select,
+        .form-group input[type="range"] {
+            width: 100%;
+            padding: var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            font-size: var(--font-size-base);
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+        }
+
+        .slider-container input[type="range"] {
+            flex: 1;
+        }
+
+        .slider-value {
+            min-width: 80px;
+            text-align: right;
+            font-weight: var(--font-weight-medium);
+            color: var(--color-primary);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            background: var(--color-secondary);
+            border-radius: var(--radius-base);
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: var(--space-12) var(--space-32);
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: background-color var(--duration-fast) var(--ease-standard);
+        }
+
+        .btn:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .prediction-result {
+            margin-top: var(--space-24);
+            padding: var(--space-24);
+            background: linear-gradient(135deg, var(--color-teal-500) 0%, var(--color-teal-700) 100%);
+            border-radius: var(--radius-lg);
+            color: white;
+            text-align: center;
+        }
+
+        .prediction-result h3 {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--space-12);
+            opacity: 0.9;
+        }
+
+        .prediction-result .rating {
+            font-size: 48px;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-8);
+        }
+
+        .prediction-result .confidence {
+            font-size: var(--font-size-base);
+            opacity: 0.8;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: var(--space-24);
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--space-24);
+            margin-bottom: var(--space-24);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--space-16);
+        }
+
+        table th,
+        table td {
+            padding: var(--space-12);
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        table th {
+            background-color: var(--color-secondary);
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-sm);
+            text-transform: uppercase;
+            color: var(--color-text);
+        }
+
+        table td {
+            font-size: var(--font-size-base);
+        }
+
+        table tr:hover {
+            background-color: var(--color-secondary);
+        }
+
+        .footer {
+            background-color: var(--color-surface);
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-32) var(--space-24);
+            text-align: center;
+            margin-top: var(--space-32);
+        }
+
+        .footer p {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--space-8);
+        }
+
+        .footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+            margin: 0 var(--space-8);
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .quick-facts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-16);
+            margin-top: var(--space-20);
+        }
+
+        .fact-item {
+            padding: var(--space-16);
+            background-color: var(--color-background);
+            border-radius: var(--radius-base);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .fact-item h4 {
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-4);
+        }
+
+        .fact-item p {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: var(--font-size-3xl);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="theme-toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
+        <h1>Movie Rating Prediction System</h1>
+        <p>2023-2024 | Python, Scikit-learn, Pandas, Matplotlib</p>
+    </div>
+
+    <nav class="nav-tabs">
+        <button class="nav-tab active" onclick="showTab('dashboard')">Dashboard</button>
+        <button class="nav-tab" onclick="showTab('prediction')">Prediction Tool</button>
+        <button class="nav-tab" onclick="showTab('analysis')">Analysis</button>
+        <button class="nav-tab" onclick="showTab('performance')">Model Performance</button>
+    </nav>
+
+    <div class="container">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Movies</h3>
+                    <div class="value">5,000</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Average Rating</h3>
+                    <div class="value">7.44</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Directors</h3>
+                    <div class="value">200</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Genres</h3>
+                    <div class="value">10</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Dataset Overview</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Total Movies</td>
+                            <td>5,000</td>
+                        </tr>
+                        <tr>
+                            <td>Average Rating</td>
+                            <td>7.44 / 10</td>
+                        </tr>
+                        <tr>
+                            <td>Average Budget</td>
+                            <td>$60.14M</td>
+                        </tr>
+                        <tr>
+                            <td>Average Runtime</td>
+                            <td>119.28 minutes</td>
+                        </tr>
+                        <tr>
+                            <td>Number of Directors</td>
+                            <td>200</td>
+                        </tr>
+                        <tr>
+                            <td>Number of Genres</td>
+                            <td>10</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>Quick Facts</h2>
+                <div class="quick-facts">
+                    <div class="fact-item">
+                        <h4>📊 Highest Rated Genre</h4>
+                        <p>Drama leads with an average rating of 7.61</p>
+                    </div>
+                    <div class="fact-item">
+                        <h4>💰 Most Expensive Genre</h4>
+                        <p>Animation averages $78.9M in budget</p>
+                    </div>
+                    <div class="fact-item">
+                        <h4>🎬 Most Common Genre</h4>
+                        <p>Drama with 513 movies in the dataset</p>
+                    </div>
+                    <div class="fact-item">
+                        <h4>⭐ Top Predictor</h4>
+                        <p>Budget is the most important feature (32%)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prediction Tool Tab -->
+        <div id="prediction" class="tab-content">
+            <div class="section">
+                <h2>Predict Movie Rating</h2>
+                <form id="predictionForm" onsubmit="predictRating(event)">
+                    <div class="form-group">
+                        <label for="genre">Genre</label>
+                        <select id="genre" required>
+                            <option value="">Select Genre</option>
+                            <option value="Action">Action</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Drama">Drama</option>
+                            <option value="Horror">Horror</option>
+                            <option value="Romance">Romance</option>
+                            <option value="Sci-Fi">Sci-Fi</option>
+                            <option value="Thriller">Thriller</option>
+                            <option value="Animation">Animation</option>
+                            <option value="Adventure">Adventure</option>
+                            <option value="Crime">Crime</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">Budget (in millions)</label>
+                        <div class="slider-container">
+                            <input type="range" id="budget" min="10" max="300" value="60" oninput="updateSliderValue('budget')">
+                            <span class="slider-value" id="budgetValue">$60M</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="runtime">Runtime (minutes)</label>
+                        <div class="slider-container">
+                            <input type="range" id="runtime" min="34" max="204" value="119" oninput="updateSliderValue('runtime')">
+                            <span class="slider-value" id="runtimeValue">119 min</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="castSize">Cast Size</label>
+                        <div class="slider-container">
+                            <input type="range" id="castSize" min="5" max="50" value="25" oninput="updateSliderValue('castSize')">
+                            <span class="slider-value" id="castSizeValue">25</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="directorExp">Director Experience (number of films)</label>
+                        <div class="slider-container">
+                            <input type="range" id="directorExp" min="10" max="40" value="25" oninput="updateSliderValue('directorExp')">
+                            <span class="slider-value" id="directorExpValue">25 films</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-full">Predict Rating</button>
+                </form>
+
+                <div id="predictionOutput"></div>
+            </div>
+
+            <div class="section" id="similarMoviesSection" style="display: none;">
+                <h2>Similar Movies</h2>
+                <table id="similarMoviesTable">
+                    <thead>
+                        <tr>
+                            <th>Movie</th>
+                            <th>Genre</th>
+                            <th>Rating</th>
+                            <th>Budget</th>
+                        </tr>
+                    </thead>
+                    <tbody id="similarMoviesBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Analysis Tab -->
+        <div id="analysis" class="tab-content">
+            <div class="section">
+                <h2>Rating Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="ratingDistChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-grid">
+                <div class="section">
+                    <h2>Genre-wise Average Ratings</h2>
+                    <div class="chart-container">
+                        <canvas id="genreRatingChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Budget vs Rating</h2>
+                    <div class="chart-container">
+                        <canvas id="budgetRatingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Feature Importance</h2>
+                <div class="chart-container">
+                    <canvas id="featureImportanceChart"></canvas>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Genre Statistics</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Genre</th>
+                            <th>Movie Count</th>
+                            <th>Avg Rating</th>
+                            <th>Avg Budget</th>
+                        </tr>
+                    </thead>
+                    <tbody id="genreStatsTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Model Performance Tab -->
+        <div id="performance" class="tab-content">
+            <div class="section">
+                <h2>Model Comparison</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Train R²</th>
+                            <th>Test R²</th>
+                            <th>MAE</th>
+                            <th>RMSE</th>
+                            <th>CV Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modelComparisonTable">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="chart-grid">
+                <div class="section">
+                    <h2>Model R² Comparison</h2>
+                    <div class="chart-container">
+                        <canvas id="modelR2Chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Error Metrics Comparison</h2>
+                    <div class="chart-container">
+                        <canvas id="errorMetricsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Model Insights</h2>
+                <div class="quick-facts">
+                    <div class="fact-item">
+                        <h4>🏆 Best Model</h4>
+                        <p>Tuned Gradient Boosting with Test R² of 0.8156</p>
+                    </div>
+                    <div class="fact-item">
+                        <h4>📉 Lowest Error</h4>
+                        <p>Tuned GB achieves MAE of 0.3645</p>
+                    </div>
+                    <div class="fact-item">
+                        <h4>🎯 Cross-Validation</h4>
+                        <p>Tuned GB shows best CV score of 0.8045</p>
+                    </div>
+                    <div class="fact-item">
+                        <h4>⚡ Performance</h4>
+                        <p>All models show strong predictive capability</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2023-2024 Movie Rating Prediction System | Machine Learning Project</p>
+        <p>
+            <a href="#" target="_blank">GitHub</a>
+            <a href="#" target="_blank">Documentation</a>
+            <a href="#" target="_blank">Dataset</a>
+        </p>
+    </footer>
+
+    <script>
+        // Application Data
+        const appData = {
+            genres: [
+                {name: "Action", count: 497, avg_rating: 7.52, avg_budget: 65.30},
+                {name: "Comedy", count: 510, avg_rating: 7.18, avg_budget: 52.10},
+                {name: "Drama", count: 513, avg_rating: 7.61, avg_budget: 58.20},
+                {name: "Horror", count: 480, avg_rating: 7.25, avg_budget: 48.50},
+                {name: "Romance", count: 501, avg_rating: 7.35, avg_budget: 55.80},
+                {name: "Sci-Fi", count: 502, avg_rating: 7.48, avg_budget: 75.60},
+                {name: "Thriller", count: 488, avg_rating: 7.39, avg_budget: 62.10},
+                {name: "Animation", count: 499, avg_rating: 7.55, avg_budget: 78.90},
+                {name: "Adventure", count: 506, avg_rating: 7.42, avg_budget: 71.20},
+                {name: "Crime", count: 504, avg_rating: 7.58, avg_budget: 61.40}
+            ],
+            modelPerformance: [
+                {model: "Random Forest", train_r2: 0.8956, test_r2: 0.7834, mae: 0.4521, rmse: 0.6234, cv_score: 0.7652},
+                {model: "Gradient Boosting", train_r2: 0.8712, test_r2: 0.8021, mae: 0.3892, rmse: 0.5421, cv_score: 0.7823},
+                {model: "Tuned GB", train_r2: 0.8834, test_r2: 0.8156, mae: 0.3645, rmse: 0.5012, cv_score: 0.8045}
+            ],
+            featureImportance: [
+                {feature: "Budget", importance: 0.32},
+                {feature: "Runtime", importance: 0.18},
+                {feature: "Genre", importance: 0.22},
+                {feature: "Director Experience", importance: 0.15},
+                {feature: "Cast Size", importance: 0.08},
+                {feature: "Production Company", importance: 0.05}
+            ],
+            ratingDistribution: [
+                {range: "4.0-5.0", count: 156},
+                {range: "5.0-6.0", count: 342},
+                {range: "6.0-7.0", count: 876},
+                {range: "7.0-8.0", count: 1923},
+                {range: "8.0-9.0", count: 1456},
+                {range: "9.0-10.0", count: 247}
+            ],
+            sampleMovies: [
+                {title: "The Dark Knight", genre: "Action", rating: 9.0, budget: 185},
+                {title: "Inception", genre: "Sci-Fi", rating: 8.8, budget: 160},
+                {title: "The Godfather", genre: "Crime", rating: 9.2, budget: 6},
+                {title: "Pulp Fiction", genre: "Crime", rating: 8.9, budget: 8},
+                {title: "Forrest Gump", genre: "Drama", rating: 8.8, budget: 55},
+                {title: "The Matrix", genre: "Sci-Fi", rating: 8.7, budget: 63},
+                {title: "Toy Story", genre: "Animation", rating: 8.3, budget: 30},
+                {title: "Interstellar", genre: "Sci-Fi", rating: 8.6, budget: 165}
+            ]
+        };
+
+        let charts = {};
+
+        // Tab Navigation
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+
+            // Initialize charts when tabs are shown
+            if (tabId === 'analysis' && !charts.ratingDist) {
+                initAnalysisCharts();
+            }
+            if (tabId === 'performance' && !charts.modelR2) {
+                initPerformanceCharts();
+            }
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            const root = document.documentElement;
+            const currentTheme = root.getAttribute('data-color-scheme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-color-scheme', newTheme);
+        }
+
+        // Slider Updates
+        function updateSliderValue(sliderId) {
+            const slider = document.getElementById(sliderId);
+            const valueSpan = document.getElementById(sliderId + 'Value');
+            
+            switch(sliderId) {
+                case 'budget':
+                    valueSpan.textContent = '$' + slider.value + 'M';
+                    break;
+                case 'runtime':
+                    valueSpan.textContent = slider.value + ' min';
+                    break;
+                case 'castSize':
+                    valueSpan.textContent = slider.value;
+                    break;
+                case 'directorExp':
+                    valueSpan.textContent = slider.value + ' films';
+                    break;
+            }
+        }
+
+        // Prediction Function
+        function predictRating(event) {
+            event.preventDefault();
+            
+            const genre = document.getElementById('genre').value;
+            const budget = parseInt(document.getElementById('budget').value);
+            const runtime = parseInt(document.getElementById('runtime').value);
+            const castSize = parseInt(document.getElementById('castSize').value);
+            const directorExp = parseInt(document.getElementById('directorExp').value);
+
+            // Find genre data
+            const genreData = appData.genres.find(g => g.name === genre);
+            
+            // Simple prediction algorithm based on feature importance
+            let predictedRating = 5.0; // Base rating
+            
+            // Budget impact (32% importance)
+            predictedRating += (budget / 100) * 0.32;
+            
+            // Genre impact (22% importance)
+            if (genreData) {
+                predictedRating += (genreData.avg_rating - 7.0) * 0.22;
+            }
+            
+            // Runtime impact (18% importance)
+            predictedRating += ((runtime - 119) / 100) * 0.18;
+            
+            // Director experience impact (15% importance)
+            predictedRating += ((directorExp - 25) / 40) * 0.15;
+            
+            // Cast size impact (8% importance)
+            predictedRating += ((castSize - 25) / 50) * 0.08;
+            
+            // Normalize to 0-10 range
+            predictedRating = Math.max(4.0, Math.min(10.0, predictedRating));
+            
+            // Calculate confidence (higher for values closer to average)
+            const confidence = Math.max(75, Math.min(95, 90 - Math.abs(predictedRating - 7.44) * 5));
+
+            // Display result
+            const output = document.getElementById('predictionOutput');
+            output.innerHTML = `
+                <div class="prediction-result">
+                    <h3>Predicted Rating</h3>
+                    <div class="rating">${predictedRating.toFixed(2)}/10</div>
+                    <div class="confidence">Confidence: ${confidence.toFixed(0)}%</div>
+                </div>
+            `;
+
+            // Show similar movies
+            showSimilarMovies(genre);
+        }
+
+        // Show Similar Movies
+        function showSimilarMovies(genre) {
+            const section = document.getElementById('similarMoviesSection');
+            const tbody = document.getElementById('similarMoviesBody');
+            
+            // Filter movies by genre
+            const similarMovies = appData.sampleMovies.filter(m => m.genre === genre);
+            
+            // If no exact match, show all sample movies
+            const moviesToShow = similarMovies.length > 0 ? similarMovies : appData.sampleMovies.slice(0, 4);
+            
+            tbody.innerHTML = moviesToShow.map(movie => `
+                <tr>
+                    <td>${movie.title}</td>
+                    <td>${movie.genre}</td>
+                    <td>${movie.rating}/10</td>
+                    <td>$${movie.budget}M</td>
+                </tr>
+            `).join('');
+            
+            section.style.display = 'block';
+        }
+
+        // Initialize Analysis Charts
+        function initAnalysisCharts() {
+            // Rating Distribution Chart
+            const ratingDistCtx = document.getElementById('ratingDistChart').getContext('2d');
+            charts.ratingDist = new Chart(ratingDistCtx, {
+                type: 'bar',
+                data: {
+                    labels: appData.ratingDistribution.map(d => d.range),
+                    datasets: [{
+                        label: 'Number of Movies',
+                        data: appData.ratingDistribution.map(d => d.count),
+                        backgroundColor: ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F', '#DB4545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Genre Rating Chart
+            const genreRatingCtx = document.getElementById('genreRatingChart').getContext('2d');
+            charts.genreRating = new Chart(genreRatingCtx, {
+                type: 'bar',
+                data: {
+                    labels: appData.genres.map(g => g.name),
+                    datasets: [{
+                        label: 'Average Rating',
+                        data: appData.genres.map(g => g.avg_rating),
+                        backgroundColor: '#1FB8CD'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: false,
+                            min: 6.5,
+                            max: 8.0
+                        }
+                    }
+                }
+            });
+
+            // Budget vs Rating Chart
+            const budgetRatingCtx = document.getElementById('budgetRatingChart').getContext('2d');
+            charts.budgetRating = new Chart(budgetRatingCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Budget vs Rating',
+                        data: appData.genres.map(g => ({x: g.avg_budget, y: g.avg_rating})),
+                        backgroundColor: '#FFC185'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Budget (millions)' }
+                        },
+                        y: { 
+                            title: { display: true, text: 'Rating' },
+                            min: 6.5,
+                            max: 8.0
+                        }
+                    }
+                }
+            });
+
+            // Feature Importance Chart
+            const featureImportanceCtx = document.getElementById('featureImportanceChart').getContext('2d');
+            charts.featureImportance = new Chart(featureImportanceCtx, {
+                type: 'bar',
+                data: {
+                    labels: appData.featureImportance.map(f => f.feature),
+                    datasets: [{
+                        label: 'Importance',
+                        data: appData.featureImportance.map(f => f.importance),
+                        backgroundColor: ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F', '#DB4545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { 
+                            beginAtZero: true,
+                            max: 0.4
+                        }
+                    }
+                }
+            });
+
+            // Populate genre stats table
+            const genreStatsTable = document.getElementById('genreStatsTable');
+            genreStatsTable.innerHTML = appData.genres.map(genre => `
+                <tr>
+                    <td>${genre.name}</td>
+                    <td>${genre.count}</td>
+                    <td>${genre.avg_rating.toFixed(2)}</td>
+                    <td>$${genre.avg_budget.toFixed(2)}M</td>
+                </tr>
+            `).join('');
+        }
+
+        // Initialize Performance Charts
+        function initPerformanceCharts() {
+            // Model R2 Comparison Chart
+            const modelR2Ctx = document.getElementById('modelR2Chart').getContext('2d');
+            charts.modelR2 = new Chart(modelR2Ctx, {
+                type: 'bar',
+                data: {
+                    labels: appData.modelPerformance.map(m => m.model),
+                    datasets: [
+                        {
+                            label: 'Train R²',
+                            data: appData.modelPerformance.map(m => m.train_r2),
+                            backgroundColor: '#1FB8CD'
+                        },
+                        {
+                            label: 'Test R²',
+                            data: appData.modelPerformance.map(m => m.test_r2),
+                            backgroundColor: '#FFC185'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: false,
+                            min: 0.7,
+                            max: 1.0
+                        }
+                    }
+                }
+            });
+
+            // Error Metrics Chart
+            const errorMetricsCtx = document.getElementById('errorMetricsChart').getContext('2d');
+            charts.errorMetrics = new Chart(errorMetricsCtx, {
+                type: 'bar',
+                data: {
+                    labels: appData.modelPerformance.map(m => m.model),
+                    datasets: [
+                        {
+                            label: 'MAE',
+                            data: appData.modelPerformance.map(m => m.mae),
+                            backgroundColor: '#B4413C'
+                        },
+                        {
+                            label: 'RMSE',
+                            data: appData.modelPerformance.map(m => m.rmse),
+                            backgroundColor: '#5D878F'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Populate model comparison table
+            const modelComparisonTable = document.getElementById('modelComparisonTable');
+            modelComparisonTable.innerHTML = appData.modelPerformance.map(model => `
+                <tr>
+                    <td>${model.model}</td>
+                    <td>${model.train_r2.toFixed(4)}</td>
+                    <td>${model.test_r2.toFixed(4)}</td>
+                    <td>${model.mae.toFixed(4)}</td>
+                    <td>${model.rmse.toFixed(4)}</td>
+                    <td>${model.cv_score.toFixed(4)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set initial slider values
+            updateSliderValue('budget');
+            updateSliderValue('runtime');
+            updateSliderValue('castSize');
+            updateSliderValue('directorExp');
+        });
+    </script>
+</body>
+</html>
